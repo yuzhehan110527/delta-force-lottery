@@ -1011,11 +1011,16 @@ function generateResults() {
     pBullet = randomItem(pAmmo.length > 0 ? pAmmo : pEntry.ammo);
   }
 
-  // 装备
-  const helmetObj = randomItem(helmets);
-  const armorObj = randomItem(armors);
-  const vestObj = randomItem(vests);
-  const backpackObj = randomItem(backpacks);
+  // 装备 — 低等级地图限制护甲≤4级
+  const maxEquipTier = LOW_TIER_MAPS.has(map) ? 4 : 99;
+  const pickEquip = (arr) => {
+    const pool = arr.filter(e => (e.tier || 1) <= maxEquipTier);
+    return pool.length > 0 ? randomItem(pool) : randomItem(arr);
+  };
+  const helmetObj = pickEquip(helmets);
+  const armorObj = pickEquip(armors);
+  const vestObj = pickEquip(vests);
+  const backpackObj = pickEquip(backpacks);
   const operator = randomItem(operators);
 
   return {
