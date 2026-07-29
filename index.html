@@ -256,25 +256,6 @@
     font-size: 18px;
   }
 
-  .card-mod-item {
-    display: inline-block;
-    font-size: 11px;
-    color: #64748b;
-    background: rgba(100,116,139,0.08);
-    border: 1px solid rgba(100,116,139,0.2);
-    border-radius: 2px;
-    padding: 1px 6px;
-    margin: 2px 4px 2px 0;
-    line-height: 1.6;
-  }
-  .card-mod-item.mod-empty {
-    color: #334155;
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
   .card-value.placeholder {
     color: #2d3748;
     font-style: italic;
@@ -314,20 +295,6 @@
   @keyframes diceSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-  }
-
-  .card-tag {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    color: #22c55e;
-    background: rgba(34,197,94,0.12);
-    border: 1px solid rgba(34,197,94,0.3);
-    border-radius: 2px;
-    padding: 2px 6px;
-    margin-right: 6px;
-    vertical-align: middle;
-    letter-spacing: 1px;
   }
 
   .card-ammo-row {
@@ -506,19 +473,21 @@
     border-color: rgba(245,158,11,0.6);
   }
   /* 概率滑块设置 */
-    .prob-settings { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2px; }
+  .prob-settings { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2px; }
   .prob-item { background: rgba(13,18,27,0.7); border: 1px solid rgba(45,55,72,0.5); border-radius: 4px; padding: 10px 12px; }
   .prob-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .prob-label { font-size: 13px; color: #c8cdd4; font-weight: 500; }
   .prob-val { font-size: 14px; font-weight: 700; color: #22c55e; min-width: 36px; text-align: right; }
-  .prob-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-  .prob-btn { font-size: 11px; padding: 4px 10px; border-radius: 3px; border: 1px solid rgba(45,55,72,0.6); background: rgba(30,41,59,0.8); color: #8b94a3; cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
-  .prob-btn:hover { border-color: #f59e0b; color: #f59e0b; }
-  .prob-btn.active { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.1); }
+  .prob-slider { width: 100%; height: 8px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); border-radius: 4px; outline: none; cursor: pointer; margin-top: 2px; }
+  .prob-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #f59e0b; border: 2px solid #d97706; cursor: pointer; transition: all 0.15s; }
+  .prob-slider::-webkit-slider-thumb:hover { background: #fbbf24; transform: scale(1.1); }
+  .prob-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #f59e0b; border: 2px solid #d97706; cursor: pointer; }
   @media (min-width: 560px) {
     .prob-settings { gap: 10px; }
     .prob-item { padding: 12px 14px; }
-    .prob-btn { font-size: 12px; padding: 5px 12px; }
+    .prob-slider { height: 6px; }
+    .prob-slider::-webkit-slider-thumb { width: 22px; height: 22px; }
+    .prob-slider::-moz-range-thumb { width: 22px; height: 22px; }
   }
 
   .admin-source-hint {
@@ -564,10 +533,8 @@
   <div class="results">
     <div class="card" id="card-w1"><div class="card-label">主武器</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-a1"><div class="card-label">主武器子弹</div><div class="card-value placeholder">等待抽取…</div></div>
-    <div class="card full-width" id="card-w1mod"><div class="card-label">主武器改装配件</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-w2"><div class="card-label">副武器</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-a2"><div class="card-label">副武器子弹</div><div class="card-value placeholder">等待抽取…</div></div>
-    <div class="card full-width" id="card-w2mod"><div class="card-label">副武器改装配件</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-pistol"><div class="card-label">手枪</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-pa"><div class="card-label">手枪子弹</div><div class="card-value placeholder">等待抽取…</div></div>
     <div class="card" id="card-helmet"><div class="card-label">头盔</div><div class="card-value placeholder">等待抽取…</div></div>
@@ -596,36 +563,23 @@
 	          <span class="prob-label">🔫 主武器为空概率</span>
 	          <span class="prob-val" id="w1ProbVal">10%</span>
 	        </div>
-	        <div class="prob-btns">
-	          <button class="prob-btn active" onclick="setProb('w1',0.10,this)">低 10%</button>
-	          <button class="prob-btn" onclick="setProb('w1',0.25,this)">中 25%</button>
-	          <button class="prob-btn" onclick="setProb('w1',0.50,this)">高 50%</button>
-	        </div>
+	        <input type="range" class="prob-slider" id="w1ProbSlider" min="0" max="100" value="10" oninput="updateProbSlider('w1')">
 	      </div>
 	      <div class="prob-item">
 	        <div class="prob-header">
 	          <span class="prob-label">🎯 副武器为空概率</span>
 	          <span class="prob-val" id="w2ProbVal">35%</span>
 	        </div>
-	        <div class="prob-btns">
-	          <button class="prob-btn" onclick="setProb('w2',0.15,this)">低 15%</button>
-	          <button class="prob-btn active" onclick="setProb('w2',0.35,this)">中 35%</button>
-	          <button class="prob-btn" onclick="setProb('w2',0.60,this)">高 60%</button>
-	        </div>
+	        <input type="range" class="prob-slider" id="w2ProbSlider" min="0" max="100" value="35" oninput="updateProbSlider('w2')">
 	      </div>
 	      <div class="prob-item">
 	        <div class="prob-header">
 	          <span class="prob-label">🔫 手枪为空概率</span>
 	          <span class="prob-val" id="pProbVal">30%</span>
 	        </div>
-	        <div class="prob-btns">
-	          <button class="prob-btn" onclick="setProb('p',0.15,this)">低 15%</button>
-	          <button class="prob-btn active" onclick="setProb('p',0.30,this)">中 30%</button>
-	          <button class="prob-btn" onclick="setProb('p',0.60,this)">高 60%</button>
-	        </div>
+	        <input type="range" class="prob-slider" id="pProbSlider" min="0" max="100" value="30" oninput="updateProbSlider('p')">
 	      </div>
 	    </div>
-	
 
 	    <p class="admin-subtitle" style="margin-top:20px;">下方为完整的抽奖数据定义（JavaScript），可直接编辑后即时生效</p>
 	    <textarea id="admin-source" class="admin-source-area" spellcheck="false"></textarea>
@@ -667,11 +621,11 @@ const weaponCaliberMap = {
 		"AR-57 步枪":        { cal: "5.7×28mm", ammo: ["1级 · SS198LF","2级 · SS197SR","3级 · L191","4级 · SS193","5级 · SS190","特3级 · R37.F（肉弹）"] },
 
 		// 9x19mm
-		"UZI 冲锋枪":        { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		"野牛 冲锋枪":       { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		"勇士 冲锋枪":       { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		"MP5 冲锋枪":        { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		"QCQ171 冲锋枪":     { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
+		"UZI 冲锋枪":        { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		"野牛 冲锋枪":       { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		"勇士 冲锋枪":       { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		"MP5 冲锋枪":        { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		"QCQ171 冲锋枪":     { cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
 
 		// ===== 步枪口径 =====
 
@@ -718,7 +672,7 @@ const weaponCaliberMap = {
 		"PKM 通用机枪":      { cal: "7.62×54R", ammo: ["3级 · T46M","4级 · LPS","5级 · BT","6级 · SNB"] },
 
 		// 6.8x51mm
-		"M7 战斗步枪":       { cal: "6.8×51mm", ammo: ["4级 · FMJ","5级 · Hybrid","6级 · AP","特3级 · PLY-I（轻型弹）","特4级 · PLY-II（轻型弹）","特5级 · PLY-III（轻型弹）"] },
+		"M7 战斗步枪":       { cal: "6.8×51mm", ammo: ["4级 · FMJ","5级 · Hybrid","6级 · AP","特4级 · PLY-I（轻型弹）","特5级 · PLY-II（轻型弹）","特6级 · PLY-III（轻型弹）"] },
 		"RM277 战斗步枪":    { cal: "6.8×51mm", ammo: ["4级 · FMJ","5级 · Hybrid","6级 · AP","特4级 · PLY-I（轻型弹）","特5级 · PLY-II（轻型弹）","特6级 · PLY-III（轻型弹）"] },
 		"M250 通用机枪":     { cal: "6.8×51mm", ammo: ["4级 · FMJ","5级 · Hybrid","6级 · AP","特4级 · PLY-I（轻型弹）","特5级 · PLY-II（轻型弹）","特6级 · PLY-III（轻型弹）"] },
 
@@ -750,745 +704,140 @@ const weaponCaliberMap = {
 		"复合弓":            { cal: "箭矢", ammo: ["3级 · 玻纤柳叶箭矢","4级 · 碳纤维刺骨箭矢","5级 · 碳纤维穿甲箭矢","特5级 · 碳纤维散射箭矢"] },
 
 		// .338 Lapua Magnum
-		"AWM 狙击步枪":      { cal: ".338 Lapua", ammo: ["7级 · Mag AP"] },
+		"AWM 狙击步枪":      { cal: ".338 Lapua", ammo: ["2级 · .338 弹","3级 · .338 弹","4级 · .338 穿甲弹","5级 · .338 穿甲弹"] },
 
 		// .50 BMG
-		"M82 狙击步枪":      { cal: ".50 BMG", ammo: ["7级 · M903 SLAP","特6级 · M3 K-0（超压弹）","特6级 · M10 RAZOR（重伤弹）"] },
+		"M82 狙击步枪":      { cal: ".50 BMG", ammo: ["4级 · .50 BMG 穿甲弹","5级 · .50 BMG 高爆弹"] },
 	};
-
-
-// ====================================================================
-// 改枪配件数据 — 基于配件.xlsx
-// ====================================================================
-
-// 改枪槽位定义（配件可选项以"无"结尾表示可以为空）
-const gunModSlots = {
-  '单增高槽位': ['OKP-7反射瞄准镜', '微型红点瞄准镜', '战斗红点瞄准镜', 'COBRA准直式瞄准镜', 'Osight瞄准镜', '全系瞄准镜', '俄式准直二倍瞄准镜', '反射式瞄准镜', '全系二型瞄准镜', '全景红点瞄准镜', 'XRO快速反应瞄准镜', 'MEO微型瞄具增高架', '先进热融合全息瞄准镜', '无'],
-  '双增高槽位': ['微型红点瞄准镜', '战斗红点瞄准镜', 'COBRA准直式瞄准镜', 'Osight瞄准镜', 'XRO快速反应瞄准镜', '无'],
-  '镭射位': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', '无'],
-  '瞄具位': ['全系瞄准镜', '俄式准直二倍瞄准镜', '反射式瞄准镜', '全系二型瞄准镜', 'AP5000反射式瞄准镜', '全景红点瞄准镜', 'XRO快速反应瞄准镜', 'XCOG突击3.5倍瞄准镜', 'OKP-7反射瞄准镜', '微型红点瞄准镜', '战斗红点瞄准镜', 'COBRA准直式瞄准镜', 'Osight瞄准镜', 'ACOG精准六倍镜', '微型瞄具增高架', '多用途战术增高架', 'MEO微型瞄具增高架', 'HAMR组合瞄准镜', '侦查1.5-5倍镜', 'LPVO多倍率战斗瞄具', 'EP-29俄制三倍瞄准镜', '视点三倍瞄准镜', 'M3狙击镜', 'UHX全息瞄准镜', '复合弓无框瞄具', 'VMX无框瞄具', '棱镜通用二倍瞄准镜', '1p33 2/4瞄准镜', 'M57火控光学系统', '灵眼3/7弹道计算狙击镜', '3-7可调倍率狙击镜', '先进热融合全息瞄准镜', '先进白热成像战斗瞄准镜', '复合弓智能倍镜', '光学狙击8倍瞄准镜', '灵眼6/12弹道计算狙击镜', '6/12神射手变倍狙击镜', '八倍先进热成像狙击镜', '杠杆步枪守望者狙击镜', 'PSO狙击八倍瞄准镜', 'PSO战斗2.5倍瞄准镜'],
-  '侧喵位': ['侧置全景红点瞄准镜', '侧置XRO快速反应瞄准镜', '侧置微型红点瞄准镜', '侧置战斗红点瞄准镜', '侧置Osight微型瞄准镜', '无'],
-  '上导轨': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Warrior 3S战术手电', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '右导轨': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Warrior 3S战术手电', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', '游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '左导轨': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', '游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '上导轨无贴片': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Warrior 3S战术手电', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '无'],
-  '右导轨无贴片': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Warrior 3S战术手电', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', '无'],
-  '左导轨无贴片': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', '无'],
-  '下导轨': ['Olight Baldr Pro R多用途手电', '实用枪灯', 'JAD下挂激光', '下挂手枪灯', '无'],
-  '右导轨无贴片左轮': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Warrior 3S战术手电', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', 'JAD下挂激光', '游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '左导轨无贴片左轮': ['红色镭射', '紫色镭射', '绿色镭射', '蓝色镭射', 'Olight Odin S战术手电', 'Olight Baldr Pro R多用途手电', '耀斑战术手电', '实用枪灯', 'JAD下挂激光', '游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '贴片位': ['游侠护木片', 'KC猎犬护木片', 'DD蟒蛇护木片', '狂风护木片', '组合式护木片', '无'],
-  '枪托位（选择后枪托垫-1）': ['UZI枪托尾盖', 'AK枪托尾盖', '实用轻型枪托', 'AK骨架枪托', 'AK聚合物枪托', '实用稳定枪托', 'G3伸缩枪托', 'MP5尾盖', 'SR-3M尾盖', '.357左轮逐风者枪托', 'UZI枪托', 'M4缓冲托芯', 'SCAR-H枪托尾盖', 'SG552枪托尾盖', 'SMG枪托尾盖', 'PKM枪托尾盖', '杠杆步枪无托后握把', 'M16A4稳定枪托', 'G3稳定枪托', 'AK折叠枪托', 'MP5K折叠枪托', '杠杆式步枪稳固狙击枪托', 'Vector枪托套件', 'MP7枪托尾盖', 'AS Val枪托尾盖', 'G3枪托', 'S12K撞火枪托', '精英轻型枪托', '杠杆式步枪运动枪托', '杠杆式步枪战锤战术枪托', '骨架狙击枪托', '1014固定枪托', '侵略核心枪托', 'AK19枪托', '枢纽稳固枪托', '416稳固枪托', '闪电导轨枪托', '416轻型枪托', '1014伸缩托（展开）', '1014伸缩托（折叠）', '枢机先进战斗枪托', 'PKM泽宁特枪托', 'M14EBR枪托', '杠杆式步枪骨架枪托', 'KC17先进战斗枪托', '725双管霰弹枪守望者枪托', '725双管霰弹枪州长短枪托', '锚点导轨后托', 'M249精英骨架枪托', 'SVCH支点后托', 'MRGS镂空枪托', '影袭托芯枪托', 'UR特种战术枪托', '416-C伸缩枪托', 'PT1特种枪托', '影袭导轨枪托', 'PT3死士枪托', 'QR高性能后托', 'MK47主宰者后托', 'CT增强型后托', 'AMR-HT镂空枪托', 'ASH-12狙击后托', 'ASH-12骨架枪托', '无'],
-  '托腮板': ['通用托腮板', 'QBZ托腮板', 'AUG枪托垫', 'RM277托腮板', 'RM277托垫', 'M700托腮板', 'P90枪托垫', '无'],
-  '枪托套件（选择后枪托-1，后握把-1）': ['VSS精英一体枪托', 'Vector共振一体式枪托', 'svd聚合物一体枪托', '共振二代一体枪托', '禁区一体枪托', '无'],
-  '前握把': ['实用垂直握把', 'ZFSG战术握把', '迷你阻手器', '折叠握把', 'VFG骑士前握把', 'RK-0前握把', '斜角阻手器', '破晓垂直手电握把', '战术垂直握把', 'K1精英斜角握把', '战术三角握把', '伸缩脚架握把', '竞赛阻手器', 'X25U斜侧战术握把', 'CR棱镜阻手器', 'EC通用前阻手', '共振三代握把', '幻影垂直握把', '黎明三角手电握把', '相位战斗前握把', '共振人体工程握把', '密令斜角握把', '共振二代前握把', '无'],
-  '枪口': ['实用手枪消焰器', '实用消焰器', '实用霰弹收束器', '净化手枪消音器', '喇叭口消焰器', '鸟笼消焰器', '钢制膛口制退器', '精英手枪制退器', '霰弹枪囚笼补偿器', 'AK实用补偿器', '实用消音器', '漩涡消焰器', '炙火抑制器', '霰弹枪精密消音器', 'PBS俄式消音器', 'M7实用消音器', '俄系冲锋枪精密消音器', '蛛网钛制制退器', '霰弹枪回声消音器', '杠杆式步枪守望者钢制制退器', 'RM277断流消音器', '薪火螺旋消焰器', 'AK勇火消音器', '霰弹枪巨炮制退器', 'SR-3M隐击消音器', 'DTK制退器', '海神消焰器', '725双管霰弹枪牛仔消音器', '霰弹枪涡留收束器', '沙暴垂直补偿器', '堡垒水平补偿器', '死寂消音器', '泰坦补偿器', '先进多口径消音器', '冲锋枪回声消音器', '钛金竞赛制退器', '泰坦消音器', '余烬消音器', 'FFC双流制退器', '共鸣狙击枪消音器', '轻语战术消音器'],
-  '脚架': ['巨像稳定器', 'QJB201脚架', 'AWM两脚架', '实用两脚架', 'AUG脚架', 'AK12脚架', 'PKM两脚架', 'R93两脚架', 'SV98两脚架', '无'],
-  '枪托垫': ['通用托腮板', 'QBZ托腮板', 'AUG枪托垫', 'RM277托腮板', 'RM277托垫', 'M700托腮板', 'P90枪托垫', '无'],
-  '弹匣座': ['快拔套', '无'],
-  '导气/枪机': ['新式腾龙高速导气', 'SVCH镀络爆发枪机', 'PSG-1精准扳机', 'QCQ171新式稳固扳机', 'QCQ171新式高射速化枪机', 'QJB201新式高速导气', 'QJB201新式稳固导气', '杠杆式步枪子弹袋', 'M1911夜莺战术扳机', 'M1911夜莺战术击锤', '无'],
-  '握把片': ['平衡握把底座', '稳固握把底座', '无'],
-  '握把底': ['AR重型握把片', 'AR轻薄握把片', '无'],
-  '后握把': ['左轮狙击后握', '416实用后握', 'M7稳定后握把', 'M9肉色操控后握', 'M9木色稳定后握', 'M9黑色均衡后握', '沙鹰竞技后握', 'M1911夜莺战术后握把', '.357左轮逐风者后握把', 'XK防滑纹后握', 'XK橡胶套后握', 'XK竞技后握', '稳定AK后握把', '实用AK后握把', '飓风D-1后握把', '射手AK后握把', '射手D-2后握把', 'PSG-1后握把', 'AR MOE后握把', 'G3镂空握把', '侍卫稳固后握把', 'G3后握把', 'AK重塔握把', 'AR重塔握把', '新式尖兵轻型握把', 'RK3后握把', '兵峰新式握把', '新式侍剑重型握把', '侵袭后握把', '模块化AR后握把', 'M249蝎尾握把', 'SVCH星象稳固握把', 'MP7平衡后握把', 'SVCH风影轻质握把', '幻影后握把', 'MP7稳固后握把', '天蝎座后握把', 'AK镂空握把', '无'],
-};
-
-// 按武器分类定义该武器拥有的改枪槽位
-// 步枪类（突击步枪、战斗步枪、轻机枪、通用机枪）：瞄具位、侧喵位、上导轨、右导轨、左导轨、贴片位、枪托位、托腮板、枪托套件、前握把、枪口、脚架、枪托垫、弹匣座、导气/枪机、握把片、握把底、后握把、单增高槽位、双增高槽位、镭射位
-// 冲锋枪类：瞄具位、侧喵位、上导轨、右导轨、左导轨、贴片位、枪托位、枪口、前握把、弹匣座
-// 射手步枪类：瞄具位、侧喵位、上导轨、右导轨、左导轨、贴片位、枪托位、枪口、前握把、脚架、枪托垫、弹匣座、导气/枪机、后握把
-// 狙击步枪类：瞄具位、侧喵位、枪口、脚架、弹匣座、枪托位、后握把
-// 霰弹枪类：瞄具位、枪口、枪托位、前握把、上导轨、右导轨、左导轨
-// 手枪类：枪口、镭射位、下导轨、弹匣座、后握把、瞄具位
-const weaponModSlots = {};
-
-// 工具函数：返回武器所属类别
-function getWeaponCategory(name) {
-  if (name.includes('手枪')) return 'pistol';
-  if (name.includes('冲锋枪')) return 'smg';
-  if (name.includes('步枪')) {
-    if (name.includes('射手')) return 'dmr';
-    if (name.includes('狙击')) return 'sniper';
-    if (name.includes('突击') || name.includes('战斗') || name.includes('杠杆')) return 'rifle';
-  }
-  if (name.includes('霰弹枪') || name.includes('双管')) return 'shotgun';
-  if (name.includes('轻机枪') || name.includes('通用机枪')) return 'rifle';
-  if (name.includes('复合弓')) return 'bow';
-  return 'rifle';
-}
-
-// 根据武器类别获取可用的改枪槽位
-function getModSlotsForWeapon(name) {
-  // 特殊武器硬编码
-  if (name.includes('复合弓')) return [];
-  if (name === 'M82 狙击步枪') return ['瞄具位','侧喵位','枪口','脚架','弹匣座','后握把','枪托位'];
-
-  const cat = getWeaponCategory(name);
-  switch(cat) {
-    case 'rifle':
-      return ['瞄具位','镭射位','侧喵位','上导轨','右导轨','左导轨','贴片位','枪托位','前握把','枪口','脚架','弹匣座','导气/枪机','握把片','握把底','后握把','枪托垫','托腮板','枪托套件'];
-    case 'smg':
-      return ['瞄具位','镭射位','侧喵位','上导轨','右导轨','左导轨','贴片位','枪托位','前握把','枪口','弹匣座','后握把','枪托垫','枪托套件'];
-    case 'dmr':
-      return ['瞄具位','镭射位','侧喵位','上导轨','右导轨','左导轨','贴片位','枪托位','前握把','枪口','脚架','弹匣座','导气/枪机','后握把','枪托垫','托腮板'];
-    case 'sniper':
-      return ['瞄具位','侧喵位','枪口','脚架','弹匣座','后握把','枪托位','贴片位','枪托垫','托腮板'];
-    case 'shotgun':
-      return ['瞄具位','枪口','枪托位','前握把','上导轨','右导轨','左导轨','贴片位','侧喵位','弹匣座','后握把','枪托垫','脚架'];
-    case 'pistol':
-      return ['枪口','镭射位','下导轨','弹匣座','后握把','瞄具位'];
-    default:
-      return ['瞄具位','侧喵位','枪口','前握把','枪托位','弹匣座','后握把'];
-  }
-}
-
-// 配件兼容性数据 — 从配件.xlsx col1 解析
-// null = 通用; {category:'sniper'} = 仅狙击枪; {weapons:[...]} = 仅特定武器
-const attachmentCompat = {
-  '.357口径左轮长枪管': null,
-  '.357左轮逐风者后握把': {weapons:['.357左轮']},
-  '.357左轮逐风者枪托': {weapons:['.357左轮']},
-  '.357左轮逐风者枪管': null,
-  '1014伸缩托（展开）': {weapons:['M1014']},
-  '1014伸缩托（折叠）': {weapons:['M1015']},
-  '1014固定枪托': {weapons:['M1014']},
-  '1p33 2/4瞄准镜': null,
-  '3-7可调倍率狙击镜': null,
-  '416-C伸缩枪托': {weapons:['K416']},
-  '416实用后握': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  '416稳固枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '416轻型枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '6/12神射手变倍狙击镜': {category:'sniper'},
-  '725双管霰弹枪守望者枪托': {weapons:['725双管']},
-  '725双管霰弹枪州长短枪托': {weapons:['726双管']},
-  '725双管霰弹枪拦截者阶段枪管': null,
-  '725双管霰弹枪枪鹰隼长枪管': null,
-  '725双管霰弹枪牛仔消音器': {weapons:['725双管']},
-  '93R实用轻枪管': null,
-  '93R实用重枪管': null,
-  '93R实用长枪管': null,
-  '93R战术枪管': null,
-  '93R远射超长枪管': null,
-  'ACOG精准六倍镜': null,
-  'AK12前线长枪管': null,
-  'AK12精英脚架长枪管': null,
-  'AK12脚架': {weapons:['AK12']},
-  'AK19枪托': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'AKM实用枪管组合': null,
-  'AKM实用标准枪管组合': null,
-  'AKM性能枪管组合': null,
-  'AK勇火消音器': {weapons:['MK47', 'KC17', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SKS', 'AKS-74U']},
-  'AK实用补偿器': {weapons:['MK47', 'KC17', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SKS', 'AKS-74U']},
-  'AK折叠枪托': {weapons:['AKM', 'AK12', 'S12K', '勇士']},
-  'AK枪托尾盖': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'AK聚合物枪托': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'AK重塔握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  'AK镂空握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  'AK骨架枪托': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'AMR-HT镂空枪托': {weapons:['M82']},
-  'AP5000反射式瞄准镜': null,
-  'AR MOE后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  'AR57激流超长枪管': null,
-  'AR加百列长枪管组合': null,
-  'AR战壕标准枪管组合': null,
-  'AR特勤一体消音组合': null,
-  'AR特攻短枪管组合': null,
-  'AR碳纤维枪管组合': null,
-  'AR轻薄握把片': null,
-  'AR重型握把片': null,
-  'AR重塔握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  'AS Val刺客高级枪管': null,
-  'AS Val枪托尾盖': {weapons:['AS-Val']},
-  'ASH-12狙击后托': {weapons:['ASH-12']},
-  'ASH-12骨架枪托': {weapons:['ASH-12']},
-  'AUG实用集成三倍镜枪管': null,
-  'AUG尖兵标准枪管': null,
-  'AUG枪托垫': {weapons:['AUG']},
-  'AUG精英脚架长枪管': null,
-  'AUG脚架': {weapons:['AUG']},
-  'AWM两脚架': {weapons:['AWM']},
-  'AWM天际线长枪管': null,
-  'Ash-12 CQB短枪管': null,
-  'Ash-12 歼灭高精长枪管': null,
-  'Ash-12战斧重型枪管': null,
-  'CAR15绑手电': {weapons:['CAR-15']},
-  'COBRA准直式瞄准镜': null,
-  'CR棱镜阻手器': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'CT增强型后托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'DD蟒蛇护木片': null,
-  'DTK制退器': {weapons:['MK47', 'KC17', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SKS', 'AKS-74U']},
-  'EC通用前阻手': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'EP-29俄制三倍瞄准镜': null,
-  'FFC双流制退器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'FS-12剑冢长枪管': null,
-  'G17战术重枪管': null,
-  'G17轻量化枪管': null,
-  'G18冲击长枪管': null,
-  'G3伸缩枪托': {weapons:['G3', 'MP5', 'PSG-1', 'PTR-32']},
-  'G3加强长枪管组合': null,
-  'G3后握把': {weapons:['PTR-32', 'PSG-1']},
-  'G3守卫标准枪管组合': null,
-  'G3平台神射枪管组合': null,
-  'G3枪托': {weapons:['PSG-1']},
-  'G3稳定枪托': {weapons:['G3', 'MP5', 'PTR-32']},
-  'G3镂空握把': {weapons:['PSG-1', 'G3', 'PTR-32']},
-  'G3飓风短枪管组合': null,
-  'HAMR组合瞄准镜': null,
-  'HVK双发套件': null,
-  'HVK格斗套件': null,
-  'HVK链锯套件': null,
-  'JAD下挂激光': null,
-  'K1精英斜角握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'K416A8枪管组合': null,
-  'K416A8长枪管组合': null,
-  'K416特勤短枪管组合': null,
-  'K416精英重枪管组合': null,
-  'K437断刃短枪管组合': null,
-  'K437长矛手长枪管组合': null,
-  'KC17先进战斗枪托': {weapons:['KC17']},
-  'KC17影舞者消音': null,
-  'KC17短刃枪管': null,
-  'KC17长剑枪管': null,
-  'KC猎犬护木片': null,
-  'LPVO多倍率战斗瞄具': null,
-  'M1014断点枪管': null,
-  'M14EBR枪托': {weapons:['M14']},
-  'M14洞察超长枪管': null,
-  'M14漫游标准枪管': null,
-  'M14轻语短枪管': null,
-  'M16A4稳定枪托': {weapons:['M4', 'MK4']},
-  'M1911夜莺战术击锤': {weapons:['M1912']},
-  'M1911夜莺战术后握把': {weapons:['M1911']},
-  'M1911夜莺战术扳机': {weapons:['M1911']},
-  'M1911夜鹰战术枪管': null,
-  'M249海湾短枪管': null,
-  'M249犀牛长枪管': null,
-  'M249精英骨架枪托': {weapons:['M249']},
-  'M249蝎尾握把': {weapons:['M249']},
-  'M250侍卫短枪管': null,
-  'M250钛金长枪管': null,
-  'M3狙击镜': null,
-  'M4缓冲托芯': {weapons:['M16A4', 'CAR-15', 'M4A1', '腾龙', 'MK4', 'MCX-LT', 'SR-25', 'K416', 'AR-57']},
-  'M57火控光学系统': null,
-  'M700一体消音管': null,
-  'M700平流层长枪管': null,
-  'M700托腮板': {weapons:['M700']},
-  'M700猎食军规枪管': null,
-  'M7堤风超长枪管组合': null,
-  'M7实用消音器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'M7实用长枪管': null,
-  'M7灵蜥短枪管': null,
-  'M7稳定后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  'M870扩容枪管': null,
-  'M9木色稳定后握': {weapons:['M1912']},
-  'M9肉色操控后握': {weapons:['M1911']},
-  'M9黑色均衡后握': {weapons:['M1913']},
-  'MCX LT焰魂枪管': null,
-  'MCX LT猎手枪管': null,
-  'MEO微型瞄具增高架': null,
-  'MK47主宰者后托': {weapons:['MK47']},
-  'MK47余烬枪管': null,
-  'MK47鏖战枪管': null,
-  'MK4击剑手枪管': null,
-  'MK4深空镀烙枪管': null,
-  'MP5K折叠枪托': {weapons:['G3', 'MP5', 'PSG-1', 'PTR-32']},
-  'MP5SD特勤一体消音枪管': null,
-  'MP5尾盖': {weapons:['G3', 'MP5', 'PSG-1', 'PTR-32']},
-  'MP5性能枪管组合': null,
-  'MP5战术枪管组合': null,
-  'MP5斥候长枪管组合': null,
-  'MP5隐蔽短枪管组合': null,
-  'MP7增强枪管组合': null,
-  'MP7平衡后握把': {weapons:['MP7']},
-  'MP7月影镀铬枪管': null,
-  'MP7枪托尾盖': {weapons:['MP7']},
-  'MP7狼牙轻枪管': null,
-  'MP7稳固后握把': {weapons:['MP7']},
-  'MP7蜂刺长枪管组合': null,
-  'MRGS镂空枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'Mini-14增强枪管': null,
-  'OKP-7反射瞄准镜': null,
-  'Olight Baldr Pro R多用途手电': null,
-  'Olight Odin S战术手电': null,
-  'Olight Warrior 3S战术手电': null,
-  'Osight瞄准镜': null,
-  'P90枪托垫': {weapons:['P90']},
-  'P90猎豹重枪管': null,
-  'P90重攻长枪管': null,
-  'P90长弓精钢枪管': null,
-  'PBS俄式消音器': {weapons:['MK47', 'KC17', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SKS', 'AKS-74U']},
-  'PKM两脚架': {weapons:['PKM']},
-  'PKM地平线重枪管': null,
-  'PKM壕战短枪管': null,
-  'PKM枪托尾盖': {weapons:['PKM']},
-  'PKM泽宁特枪托': {weapons:['PKM']},
-  'PSG-1后握把': {weapons:['G3', 'PTR-32']},
-  'PSG-1精准扳机': {weapons:['PSG-1']},
-  'PSO战斗2.5倍瞄准镜': {weapons:['AKM', 'AKS74U', 'S13K', 'VSS', 'SVD', 'ASVAL']},
-  'PSO狙击八倍瞄准镜': {weapons:['AKM', 'AKS74U', 'S12K', 'VSS', 'SVD', 'ASVAL']},
-  'PT1特种枪托': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'PT3死士枪托': {weapons:['AKM', 'AK12', 'AKS74U', 'S12K', '勇士', '野牛']},
-  'QBZ95-1实用短枪管': null,
-  'QBZ95-1长弓枪管组合': null,
-  'QBZ95战术枪管': null,
-  'QBZ托腮板': {weapons:['QBZ95-1']},
-  'QCQ171新式狡兔短枪管组合': null,
-  'QCQ171新式稳固扳机': {weapons:['QCQ171']},
-  'QCQ171新式红缨战术长枪管': null,
-  'QCQ171新式高射速化枪机': {weapons:['QCQ172']},
-  'QJB201新式獠牙短枪管': null,
-  'QJB201新式稳固导气': {weapons:['QJB202']},
-  'QJB201新式重锤战术枪管': null,
-  'QJB201新式高速导气': {weapons:['QJB201']},
-  'QJB201脚架': {weapons:['QJB201']},
-  'QR高性能后托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'QSZ92G响尾蛇战术枪管': null,
-  'R93两脚架': {weapons:['R93']},
-  'R93裂变长枪管': null,
-  'R93轻盈短枪管': null,
-  'RK-0前握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'RK3后握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  'RM277托垫': {weapons:['RM278']},
-  'RM277托腮板': {weapons:['RM277']},
-  'RM277断流消音器': {weapons:['RM277']},
-  'RM277重型一体枪管': null,
-  'RM277鲸鲨枪管组合': null,
-  'S12K实用短枪管组合': null,
-  'S12K实用长管组合': null,
-  'S12K撞火枪托': {weapons:['S12K']},
-  'S12K破阵长枪管组合': null,
-  'S12K防御者短枪管组合': null,
-  'SCAR-H枪托尾盖': {weapons:['SCAR-H']},
-  'SCARH实用标准枪管': null,
-  'SCARH海狸长枪管': null,
-  'SCARH零式短枪管': null,
-  'SG552枪托尾盖': {weapons:['SG552']},
-  'SG552猎犬轻型枪管': null,
-  'SG552骑士重枪管': null,
-  'SKS截断标准枪管': null,
-  'SKS瞬息超长枪管': null,
-  'SMG45实用重枪管': null,
-  'SMG45竹鼠短枪管': null,
-  'SMG45裂变长枪管': null,
-  'SMG枪托尾盖': {weapons:['SMG-45']},
-  'SMG长弩超长枪管': null,
-  'SR-3M尾盖': {weapons:['SR-3m']},
-  'SR-3M铸钢战术枪管': null,
-  'SR-3M隐击消音器': {weapons:['SR-3m']},
-  'SR25新星超长枪管': null,
-  'SR25瞬息短枪管': null,
-  'SR25追风长枪管': null,
-  'SV98两脚架': {weapons:['SV-98']},
-  'SV98升华超长枪管': null,
-  'SV98灵巧短枪管': null,
-  'SV98龙萤轻枪管': null,
-  'SVCH支点后托': {weapons:['SVCH']},
-  'SVCH星象稳固握把': {weapons:['SVCH']},
-  'SVCH碳纤长枪管': null,
-  'SVCH精工短枪管': null,
-  'SVCH镀络爆发枪机': {weapons:['SVCH']},
-  'SVCH风影轻质握把': {weapons:['SVCH']},
-  'SVD实用长枪管': null,
-  'SVD握把转接': {weapons:['SVD']},
-  'SVD黑刺超长枪管': null,
-  'UHX全息瞄准镜': null,
-  'UR特种战术枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'UZI军需长枪管': null,
-  'UZI枪托': {weapons:['UZI']},
-  'UZI枪托尾盖': {weapons:['UZI']},
-  'UZI突击标准枪管': null,
-  'UZI竞赛性长枪管': null,
-  'VFG骑士前握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'VMX无框瞄具': null,
-  'VSS海啸长枪管组合': null,
-  'VSS精英一体枪托': {weapons:['VSS', 'ASVal']},
-  'Vector共振一体式枪托': {weapons:['Vector']},
-  'Vector堡垒重枪管组合': null,
-  'Vector导轨枪管组合': null,
-  'Vector枪托套件': {weapons:['Vector']},
-  'Vector长剑超长枪管组合': null,
-  'X25U斜侧战术握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'XCOG突击3.5倍瞄准镜': null,
-  'XK橡胶套后握': {weapons:['G17', 'G19']},
-  'XK竞技后握': {weapons:['G17', 'G20']},
-  'XK防滑纹后握': {weapons:['G17', 'G18']},
-  'XRO快速反应瞄准镜': null,
-  'ZFSG战术握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  'svd聚合物一体枪托': {weapons:['SVD']},
-  '下挂手枪灯': {weapons:['M1911', '93R']},
-  '伸缩脚架握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '余烬消音器': {weapons:['ASH-12']},
-  '侍卫稳固后握把': {weapons:['QCQ171', 'QJB201']},
-  '侦查1.5-5倍镜': null,
-  '侧置Osight微型瞄准镜': null,
-  '侧置XRO快速反应瞄准镜': null,
-  '侧置全景红点瞄准镜': null,
-  '侧置微型红点瞄准镜': null,
-  '侧置战斗红点瞄准镜': null,
-  '侵略核心枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '侵袭后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  '俄式准直二倍瞄准镜': null,
-  '俄系冲锋枪精密消音器': {weapons:['SR-3m', '勇士', '野牛']},
-  '先进多口径消音器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '先进热融合全息瞄准镜': null,
-  '先进白热成像战斗瞄准镜': null,
-  '光学狙击8倍瞄准镜': {category:'sniper'},
-  '全景红点瞄准镜': null,
-  '全系二型瞄准镜': null,
-  '全系瞄准镜': null,
-  '八倍先进热成像狙击镜': {category:'sniper'},
-  '共振三代握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '共振二代一体枪托': {weapons:['AR57', 'M4A1', 'CAR-15', 'M16A4']},
-  '共振二代前握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '共振人体工程握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '共鸣狙击枪消音器': {weapons:['SVCH', 'PSG-1', 'SR9', 'SR-25', 'SKS', 'M14', 'SVD', 'VSS', 'Mini-14', 'M82', 'AWM', 'M700', 'SV-98', 'R93']},
-  '兵峰新式握把': {weapons:['QCQ171', 'QJB201']},
-  '冲锋枪回声消音器': {weapons:['MK4', 'QCQ171', 'MP7', '勇士', 'SR-3m', 'SMG-45', '野牛', 'UZI', 'Vector', 'P90', 'MP5', 'M1911', 'G17', 'G18', '93R', '沙漠之鹰', 'QSZ92G', '.357左轮']},
-  '净化手枪消音器': {weapons:['M1911', 'G17', 'G18', '沙漠之鹰', '93R', '.357左轮', 'QSZ93G']},
-  '勇士战术枪管': null,
-  '勇士海狸枪管': null,
-  '反射式瞄准镜': null,
-  '喇叭口消焰器': {weapons:['MK47', 'KC17', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SKS', 'AKS-74U']},
-  '堡垒水平补偿器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '复合弓无框瞄具': null,
-  '复合弓智能倍镜': {category:'bow'},
-  '多用途战术增高架': null,
-  '夜莺一体消音组合': null,
-  '天蝎座后握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  '实用AK后握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  '实用两脚架': null,
-  '实用垂直握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '实用手枪消焰器': {weapons:['M1911', 'G17', 'G18', '沙漠之鹰', '93R', '.357左轮', 'QSZ92G']},
-  '实用枪灯': null,
-  '实用消焰器': {weapons:['M1911', 'G17', 'G18', '沙漠之鹰', '93R', '.357左轮', 'QSZ93G']},
-  '实用消音器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '实用稳定枪托': null,
-  '实用轻型枪托': null,
-  '实用霰弹收束器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '密令斜角握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '射手AK后握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-75U']},
-  '射手D-2后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  '左轮实用枪管': null,
-  '左轮实用长管': null,
-  '左轮狙击后握': {weapons:['.357左轮']},
-  '巨像稳定器': {weapons:['M82']},
-  '平衡握把底座': null,
-  '幻影后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  '幻影垂直握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '影袭导轨枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '影袭托芯枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '微型瞄具增高架': null,
-  '微型红点瞄准镜': null,
-  '快拔套': null,
-  '战斗红点瞄准镜': null,
-  '战术三角握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '战术垂直握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '折叠握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '拉机栓帽': null,
-  '斜角阻手器': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '新式侍剑重型握把': {weapons:['QCQ171', 'QJB201']},
-  '新式尖兵轻型握把': {weapons:['QCQ171', 'QJB201']},
-  '新式腾龙高速导气': {weapons:['腾龙']},
-  '新式蛟龙战术长枪管': null,
-  '新式雪豹短枪管': null,
-  '杠杆式步枪子弹袋': {weapons:['杠杆马林步枪']},
-  '杠杆式步枪守望者钢制制退器': {weapons:['杠杆马林步枪']},
-  '杠杆式步枪战锤战术枪托': {weapons:['杠杆马林步枪']},
-  '杠杆式步枪拓荒枪管': null,
-  '杠杆式步枪猎鹿人枪管': null,
-  '杠杆式步枪稳固狙击枪托': {weapons:['杠杆马林步枪']},
-  '杠杆式步枪运动枪托': {weapons:['杠杆马林步枪']},
-  '杠杆式步枪骨架枪托': {weapons:['杠杆马林步枪']},
-  '杠杆步枪守望者狙击镜': {weapons:['杠杆马林步枪']},
-  '杠杆步枪无托后握把': {weapons:['杠杆马林步枪']},
-  '枢机先进战斗枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '枢纽稳固枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '棱镜通用二倍瞄准镜': null,
-  '模块化AR后握把': {weapons:['M250', 'K437', 'M7', 'MK47', 'AR-57', 'K416', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'SG-552', 'SMG-45', 'CAR-15', 'M16A4']},
-  '死寂消音器': {weapons:['M250', 'K437', 'M7', 'MK47', 'AR-57', 'K416', 'MK47', 'M14', 'MP7', 'Vector', 'SR-25', 'SVCH', 'M4A1', 'MCX-LT', 'AUG', 'P90', 'M249', 'QJB201', 'MK4', 'QCQ171', 'RM277', 'SCAR-H', '腾龙', 'PSG-1', 'SG-552', 'G3', 'QBZ95-1', 'MP5', 'PTR-32', 'SMG-1', 'Mini-14', 'CAR-15', 'M16A4', 'UZI', 'SR9']},
-  '沙暴垂直补偿器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '沙漠之鹰镂空竞赛套件': null,
-  '沙鹰竞技后握': {weapons:['沙漠之鹰']},
-  '沙鹰膛线长枪管': null,
-  '泰坦消音器': {weapons:['M82', 'AWM', 'ASH-12']},
-  '泰坦补偿器': {weapons:['ASH-12']},
-  '海神消焰器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '游侠护木片': null,
-  '漩涡消焰器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '灵眼3/7弹道计算狙击镜': null,
-  '灵眼6/12弹道计算狙击镜': {category:'sniper'},
-  '炙火抑制器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '狂风护木片': null,
-  '相位战斗前握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '短吻鳄枪管组合': null,
-  '破晓垂直手电握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '禁区一体枪托': {weapons:['AR57', 'M4A1', 'CAR-15', 'M16A5']},
-  '稳固握把底座': null,
-  '稳定AK后握把': {weapons:['AS-VAL', 'PKM', 'SR-3m', 'AK-12', 'AKM', 'SVD', '勇士', 'S12K', 'SKS', '野牛', 'AKS-74U']},
-  '竞赛阻手器': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '精英手枪制退器': {weapons:['M1911', 'G17', 'G18', '沙漠之鹰', '93R', '.357左轮', 'QSZ93G']},
-  '精英轻型枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '紫色镭射': null,
-  '红色镭射': null,
-  '组合式护木片': null,
-  '绿色镭射': null,
-  '耀斑战术手电': null,
-  '蓝色镭射': null,
-  '薪火螺旋消焰器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '蛛网钛制制退器': {weapons:['M250', 'K437', 'M7', 'MK47', 'AR-57', 'K416', 'MK47', 'M14', 'MP7', 'Vector', 'SR-25', 'SVCH', 'M4A1', 'MCX-LT', 'AUG', 'P90', 'M249', 'QJB201', 'MK4', 'QCQ171', 'RM277', 'SCAR-H', '腾龙', 'PSG-1', 'SG-552', 'G3', 'QBZ95-1', 'MP5', 'PTR-32', 'SMG-1', 'Mini-14', 'CAR-15', 'M16A4', 'UZI', 'SR9']},
-  '视点三倍瞄准镜': null,
-  '轻语战术消音器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '迷你阻手器': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '通用托腮板': {weapons:['M14', 'M4A1', 'AUG', 'P90', 'MK4', 'M700', 'M1014']},
-  '野牛伞兵短枪管': null,
-  '野牛刀锋超长枪管': null,
-  '野牛打击者标准枪管': null,
-  '钛金竞赛制退器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '钢制膛口制退器': {weapons:['MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '锚点导轨后托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '闪电导轨枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '霰弹枪囚笼补偿器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '霰弹枪回声消音器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '霰弹枪巨炮制退器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '霰弹枪涡留收束器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '霰弹枪精密消音器': {weapons:['M870', 'M1014', 'S12K', '725双管', 'FS-12']},
-  '飓风D-1后握把': {weapons:['M82', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4']},
-  '骨架狙击枪托': {weapons:['AS-VAL', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'Vector', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-  '鸟笼消焰器': {weapons:['AR57', 'K416', 'M4A1', 'AUG', 'MCX-LT', 'M249', 'MK4', 'RM277', 'SG-552', 'Mini-14', 'CAR-15', 'M16A4']},
-  '黎明三角手电握把': {weapons:['ASVal', 'MP7', 'K416', 'M250', 'K437', 'M7', 'MK47', 'AR57', 'M14', 'KC17', 'SR-25', 'M4A1', 'MCX-LT', 'MK4', 'RM277', 'SCAR-H', 'M700', 'FS-12', 'SG-552', 'QBZ95-1', 'SMG-45', 'CAR-15', 'M16A4', 'SVCH', 'M249', 'PKM', 'QJB201', 'SR-3m', 'QCQ171', 'AK-12', 'G3', '腾龙', 'AKM', 'SVD', 'PSG-1', 'MP5', 'PTR-32', '勇士', 'Mini-14', 'S12K', 'M1014', 'SKS', '野牛', 'AKS-74U', 'UZI', 'M870']},
-};
-
-// 检查配件是否与指定武器兼容
-function isAttachmentCompatible(attachmentName, weaponName) {
-  var compat = attachmentCompat[attachmentName];
-  if (compat === undefined || compat === null) return true;
-  if (compat.category) {
-    var cat = getWeaponCategory(weaponName);
-    if (compat.category === 'sniper') return cat === 'sniper';
-    if (compat.category === 'shotgun') return cat === 'shotgun';
-    if (compat.category === 'bow') return cat === 'bow';
-    return false;
-  }
-  if (compat.weapons) {
-    // 模糊匹配：去除空格、连字符进行双向子串匹配
-    var weaponCompact = weaponName.replace(/[\s\-\.\(\)]/g, '').toLowerCase();
-    for (var i = 0; i < compat.weapons.length; i++) {
-      var abbrCompact = compat.weapons[i].replace(/[\s\-\.\(\)]/g, '').toLowerCase();
-      // 双向子串匹配（处理缩写/全名差异和MCX-LT→MCX等情况）
-      if (weaponCompact.indexOf(abbrCompact) !== -1 ||
-          abbrCompact.indexOf(weaponCompact) !== -1) {
-        return true;
-      }
-      // 额外：对带-的缩写按-拆分后逐部分检查（处理MCX-LT→MCX等）
-      var abbrParts = compat.weapons[i].split(/[\-]/);
-      for (var k = 0; k < abbrParts.length; k++) {
-        if (abbrParts[k].length >= 2 && weaponCompact.indexOf(abbrParts[k].toLowerCase()) !== -1) {
-          return true;
-        }
-      }
-      // 中文词匹配：检查缩写中的中文字符是否都在武器名中出现
-      var cnChars = compat.weapons[i].match(/[\u4e00-\u9fff]/g);
-      if (cnChars) {
-        var allMatch = true;
-        for (var k = 0; k < cnChars.length; k++) {
-          if (weaponName.indexOf(cnChars[k]) === -1) { allMatch = false; break; }
-        }
-        if (allMatch) return true;
-      }
-    }
-    return false;
-  }
-  return true;
-}
-
-// 随机改枪：对每个槽位进行随机抽取（包含为空的可能）
-function generateGunMod(weaponName) {
-  var slots = getModSlotsForWeapon(weaponName);
-  var result = {};
-
-  for (var i = 0; i < slots.length; i++) {
-    var slotName = slots[i];
-
-    // 对导轨类槽位，根据贴片位是否存在选择不同槽位
-    var actualSlot = slotName;
-    if (slotName === '上导轨' && slots.indexOf('贴片位') === -1) actualSlot = '上导轨无贴片';
-    if (slotName === '右导轨' && slots.indexOf('贴片位') === -1) actualSlot = '右导轨无贴片';
-    if (slotName === '左导轨' && slots.indexOf('贴片位') === -1) actualSlot = '左导轨无贴片';
-
-    var options = gunModSlots[actualSlot] || gunModSlots[slotName];
-    if (options && options.length > 0) {
-      // 过滤出与当前武器兼容的配件
-      var hasWu = (options[options.length - 1] === '无');
-      var compatOptions = [];
-      for (var j = 0; j < (hasWu ? options.length - 1 : options.length); j++) {
-        if (isAttachmentCompatible(options[j], weaponName)) {
-          compatOptions.push(options[j]);
-        }
-      }
-      // 随机抽取，按概率为空（如果有"无"选项）
-      var pick;
-      if (hasWu && compatOptions.length === 0) {
-        pick = '无';
-      } else if (hasWu && compatOptions.length > 0) {
-        var emptyProb = gunModEmptyProb || 0.30;
-        if (Math.random() < emptyProb) {
-          pick = '无';
-        } else {
-          pick = compatOptions[Math.floor(Math.random() * compatOptions.length)];
-        }
-      } else if (compatOptions.length > 0) {
-        pick = compatOptions[Math.floor(Math.random() * compatOptions.length)];
-      } else {
-        pick = options[Math.floor(Math.random() * options.length)];
-      }
-      result[slotName] = pick;
-    }
-  }
-
-  return result;
-}
-
-// 将改枪结果格式化为显示文本
-function formatGunMod(modObj) {
-  var entries = [];
-  for (var key in modObj) {
-    if (modObj[key] === '无' || modObj[key] === '' || modObj[key] === undefined) continue;
-    entries.push(key + '：' + modObj[key]);
-  }
-  if (entries.length === 0) return '无改装';
-  return entries.join('；');
-}
-
-// 改枪各个槽位为空的概率（全局可调）
-var gunModEmptyProb = 0.30;
 
 // 手枪 (独立列表)
 	const pistols = [
 		{ name: ".357 左轮手枪",         cal: ".357 Magnum", ammo: ["2级 · HP","3级 · JHP","4级 · FMJ","特3级 · 九号霰射「鼠弹」（肉弹）"] },
 		{ name: "M1911 手枪",            cal: ".45 ACP", ammo: ["1级 · HS","2级 · JHP","3级 · FMJ","4级 · AP","5级 · Super","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
 		{ name: "沙漠之鹰",              cal: ".50 AE", ammo: ["2级 · HP","3级 · JHP","4级 · FMJ","特5级 · AP（爆头弹）"] },
-		{ name: "93R 三发点射手枪",      cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		{ name: "G17 手枪",              cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		{ name: "G18 全自动手枪",        cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
-		{ name: "QSZ92G 手枪",           cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特4级 · CT（肉蛋）"] },
+		{ name: "93R 三发点射手枪",      cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		{ name: "G17 手枪",              cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		{ name: "G18 全自动手枪",        cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
+		{ name: "QSZ92G 手枪",           cal: "9×19mm", ammo: ["1级 · PSO","2级 · PST","3级 · AP6.3","4级 · PBP","5级 · 7N21","特3级 · RIP（肉弹）","特3级 · CT（肉蛋）"] },
 	];
 
 // 头盔 — 烽火地带官方名称
 const helmets = [
   { name: "老式钢盔", tier: 1, weight: 1 },
-  { name: "安保头盔", tier: 1, weight: 1 },
-  { name: "奔尼帽", tier: 1, weight: 1 },
-  { name: "户外棒球帽", tier: 1, weight: 1 },
-  { name: "H01战术头盔", tier: 2, weight: 1 },
-  { name: "DRO战术头盔", tier: 2, weight: 1 },
-  { name: "复古摩托头盔", tier: 2, weight: 1 },
-  { name: "MC防弹头盔", tier: 2, weight: 1 },
-  { name: "防爆头盔", tier: 3, weight: 1 },
-  { name: "H07战术头盔", tier: 3, weight: 1 },
-  { name: "DAS防弹头盔", tier: 3, weight: 1 },
-  { name: "MC201防弹头盔", tier: 3, weight: 1 },
-  { name: "D6战术头盔", tier: 4, weight: 1 },
-  { name: "GT1烽火战术头盔", tier: 4, weight: 1 },
-  { name: "MHS战术头盔", tier: 4, weight: 1 },
-  { name: "GT1战术头盔", tier: 4, weight: 1 },
-  { name: "DICH训练头盔", tier: 4, weight: 1 },
-  { name: "MASK-1铁壁头盔", tier: 5, weight: 1 },
-  { name: "DICH-1烽火战术头盔", tier: 5, weight: 1 },
-  { name: "GN久战重型夜视头盔", tier: 5, weight: 1 },
-  { name: "GN重型头盔", tier: 5, weight: 1 },
-  { name: "DICH-1战术头盔", tier: 5, weight: 1 },
-  { name: "赤枭装甲防弹面具", tier: 5, weight: 1 },
-  { name: "H09防弹头盔", tier: 5, weight: 1 },
-  { name: "GN重型夜视头盔", tier: 5, weight: 1 },
-  { name: "幸运头盔", tier: 6, weight: 1 },
-  { name: "GT5指挥官头盔", tier: 6, weight: 1 },
-  { name: "DICH-9重型头盔", tier: 6, weight: 1 },
-  { name: "H70夜视精英头盔", tier: 6, weight: 1 },
-  { name: "H70精英头盔", tier: 6, weight: 1 },
+  { name: "安保头盔", tier: 2, weight: 1 },
+  { name: "奔尼帽", tier: 3, weight: 1 },
+  { name: "户外棒球帽", tier: 4, weight: 1 },
+  { name: "H01战术头盔", tier: 5, weight: 1 },
+  { name: "DRO战术头盔", tier: 6, weight: 1 },
+  { name: "复古摩托头盔", tier: 7, weight: 1 },
+  { name: "MC防弹头盔", tier: 8, weight: 1 },
+  { name: "防爆头盔", tier: 9, weight: 1 },
+  { name: "H07战术头盔", tier: 10, weight: 1 },
+  { name: "DAS防弹头盔", tier: 11, weight: 1 },
+  { name: "MC201防弹头盔", tier: 12, weight: 1 },
+  { name: "D6战术头盔", tier: 13, weight: 1 },
+  { name: "GT1烽火战术头盔", tier: 14, weight: 1 },
+  { name: "MHS战术头盔", tier: 15, weight: 1 },
+  { name: "GT1战术头盔", tier: 16, weight: 1 },
+  { name: "DICH训练头盔", tier: 17, weight: 1 },
+  { name: "MASK-1铁壁头盔", tier: 18, weight: 1 },
+  { name: "DICH-1烽火战术头盔", tier: 19, weight: 1 },
+  { name: "GN久战重型夜视头盔", tier: 20, weight: 1 },
+  { name: "GN重型头盔", tier: 21, weight: 1 },
+  { name: "DICH-1战术头盔", tier: 22, weight: 1 },
+  { name: "赤枭装甲防弹面具", tier: 23, weight: 1 },
+  { name: "H09防弹头盔", tier: 24, weight: 1 },
+  { name: "GN重型夜视头盔", tier: 25, weight: 1 },
+  { name: "幸运头盔", tier: 26, weight: 1 },
+  { name: "GT5指挥官头盔", tier: 27, weight: 1 },
+  { name: "DICH-9重型头盔", tier: 28, weight: 1 },
+  { name: "H70夜视精英头盔", tier: 29, weight: 1 },
+  { name: "H70精英头盔", tier: 30, weight: 1 },
 ];
 
 // 护甲 — 烽火地带官方名称
 const armors = [
   { name: "摩托马甲", tier: 1, weight: 1 },
-  { name: "安保防弹衣", tier: 1, weight: 1 },
-  { name: "尼龙防弹衣", tier: 1, weight: 1 },
-  { name: "轻型防弹衣", tier: 1, weight: 1 },
-  { name: "简易防刺服", tier: 2, weight: 1 },
-  { name: "HT战术背心", tier: 2, weight: 1 },
-  { name: "TG战术防弹衣", tier: 2, weight: 1 },
-  { name: "通用战术背心", tier: 2, weight: 1 },
-  { name: "HVK快拆防弹衣", tier: 3, weight: 1 },
-  { name: "制式防弹背心", tier: 3, weight: 1 },
-  { name: "TG-H防弹衣", tier: 3, weight: 1 },
-  { name: "射手战术背心", tier: 3, weight: 1 },
-  { name: "DT-AVS烽火防弹衣", tier: 4, weight: 1 },
-  { name: "武士防弹背心", tier: 4, weight: 1 },
-  { name: "HMP特勤防弹背心", tier: 4, weight: 1 },
-  { name: "突击手防弹背心", tier: 4, weight: 1 },
-  { name: "DT-AVS防弹衣", tier: 4, weight: 1 },
-  { name: "MK-2战术背心", tier: 4, weight: 1 },
-  { name: "FS烽火复合防弹衣", tier: 5, weight: 1 },
-  { name: "HVK-2防弹衣", tier: 5, weight: 1 },
-  { name: "精英防弹背心", tier: 5, weight: 1 },
-  { name: "FS复合防弹衣", tier: 5, weight: 1 },
-  { name: "重型突击背心", tier: 5, weight: 1 },
-  { name: "赤枭重型突击背心", tier: 5, weight: 1 },
-  { name: "特里克MAS2.0装甲", tier: 6, weight: 1 },
-  { name: "泰坦防护装甲", tier: 6, weight: 1 },
-  { name: "金刚防弹衣", tier: 6, weight: 1 },
-  { name: "HA-2重型防弹衣", tier: 6, weight: 1 },
+  { name: "安保防弹衣", tier: 2, weight: 1 },
+  { name: "尼龙防弹衣", tier: 3, weight: 1 },
+  { name: "轻型防弹衣", tier: 4, weight: 1 },
+  { name: "简易防刺服", tier: 5, weight: 1 },
+  { name: "HT战术背心", tier: 6, weight: 1 },
+  { name: "TG战术防弹衣", tier: 7, weight: 1 },
+  { name: "通用战术背心", tier: 8, weight: 1 },
+  { name: "HVK快拆防弹衣", tier: 9, weight: 1 },
+  { name: "制式防弹背心", tier: 10, weight: 1 },
+  { name: "TG-H防弹衣", tier: 11, weight: 1 },
+  { name: "射手战术背心", tier: 12, weight: 1 },
+  { name: "DT-AVS烽火防弹衣", tier: 13, weight: 1 },
+  { name: "武士防弹背心", tier: 14, weight: 1 },
+  { name: "HMP特勤防弹背心", tier: 15, weight: 1 },
+  { name: "突击手防弹背心", tier: 16, weight: 1 },
+  { name: "DT-AVS防弹衣", tier: 17, weight: 1 },
+  { name: "MK-2战术背心", tier: 18, weight: 1 },
+  { name: "FS烽火复合防弹衣", tier: 19, weight: 1 },
+  { name: "HVK-2防弹衣", tier: 20, weight: 1 },
+  { name: "精英防弹背心", tier: 21, weight: 1 },
+  { name: "FS复合防弹衣", tier: 22, weight: 1 },
+  { name: "重型突击背心", tier: 23, weight: 1 },
+  { name: "赤枭重型突击背心", tier: 24, weight: 1 },
+  { name: "特里克MAS2.0装甲", tier: 25, weight: 1 },
+  { name: "泰坦防护装甲", tier: 26, weight: 1 },
+  { name: "金刚防弹衣", tier: 27, weight: 1 },
+  { name: "HA-2重型防弹衣", tier: 28, weight: 1 },
 ];
 
 // 弹挂（胸挂）— 烽火地带官方名称
 const vests = [
   { name: "便携胸包", tier: 1, weight: 1 },
-  { name: "快速侦查胸挂", tier: 1, weight: 1 },
-  { name: "轻型战术胸挂", tier: 1, weight: 1 },
-  { name: "简易挂载包", tier: 1, weight: 1 },
-  { name: "尼龙挎包", tier: 2, weight: 1 },
-  { name: "HK3便携胸挂", tier: 2, weight: 1 },
-  { name: "D01轻型胸挂", tier: 2, weight: 1 },
-  { name: "通用战术胸挂", tier: 2, weight: 1 },
-  { name: "简易携行弹挂", tier: 3, weight: 1 },
-  { name: "HD3战术胸挂", tier: 3, weight: 1 },
-  { name: "DSA战术胸挂", tier: 3, weight: 1 },
-  { name: "G01战术胸挂", tier: 3, weight: 1 },
-  { name: "强袭战术背心", tier: 4, weight: 1 },
-  { name: "突击者战术背心", tier: 4, weight: 1 },
-  { name: "DRC先进侦查胸挂", tier: 4, weight: 1 },
-  { name: "GIR野战胸挂", tier: 4, weight: 1 },
-  { name: "飓风战术胸挂", tier: 5, weight: 1 },
-  { name: "黑鹰野战胸挂", tier: 5, weight: 1 },
-  { name: "DAR突击手胸挂", tier: 5, weight: 1 },
+  { name: "快速侦查胸挂", tier: 2, weight: 1 },
+  { name: "轻型战术胸挂", tier: 3, weight: 1 },
+  { name: "简易挂载包", tier: 4, weight: 1 },
+  { name: "尼龙挎包", tier: 5, weight: 1 },
+  { name: "HK3便携胸挂", tier: 6, weight: 1 },
+  { name: "D01轻型胸挂", tier: 7, weight: 1 },
+  { name: "通用战术胸挂", tier: 8, weight: 1 },
+  { name: "简易携行弹挂", tier: 9, weight: 1 },
+  { name: "HD3战术胸挂", tier: 10, weight: 1 },
+  { name: "DSA战术胸挂", tier: 11, weight: 1 },
+  { name: "G01战术胸挂", tier: 12, weight: 1 },
+  { name: "强袭战术背心", tier: 13, weight: 1 },
+  { name: "突击者战术背心", tier: 14, weight: 1 },
+  { name: "DRC先进侦查胸挂", tier: 15, weight: 1 },
+  { name: "GIR野战胸挂", tier: 16, weight: 1 },
+  { name: "飓风战术胸挂", tier: 17, weight: 1 },
+  { name: "黑鹰野战胸挂", tier: 18, weight: 1 },
+  { name: "DAR突击手胸挂", tier: 19, weight: 1 },
 ];
 
 // 背包 — 烽火地带官方名称
 const backpacks = [
   { name: "斜挎包", tier: 1, weight: 1 },
-  { name: "运动背包", tier: 1, weight: 1 },
-  { name: "旅行背包", tier: 1, weight: 1 },
-  { name: "帆布背囊", tier: 1, weight: 1 },
-  { name: "DG运动背包", tier: 1, weight: 1 },
-  { name: "轻型户外背包", tier: 2, weight: 1 },
-  { name: "露营背包", tier: 2, weight: 1 },
-  { name: "战术快拆背包", tier: 2, weight: 1 },
-  { name: "突袭战术背包", tier: 2, weight: 1 },
-  { name: "大型登山包", tier: 3, weight: 1 },
-  { name: "3H战术背包", tier: 3, weight: 1 },
-  { name: "DASH战术背包", tier: 3, weight: 1 },
-  { name: "GA野战背包", tier: 3, weight: 1 },
-  { name: "雨林猎手背包", tier: 3, weight: 1 },
-  { name: "MAP侦查背包", tier: 4, weight: 1 },
-  { name: "野战徒步背包", tier: 4, weight: 1 },
-  { name: "D2战术登山包", tier: 4, weight: 1 },
-  { name: "GT1户外登山包", tier: 4, weight: 1 },
-  { name: "生存战术背包", tier: 4, weight: 1 },
-  { name: "ALS背负系统", tier: 5, weight: 1 },
-  { name: "HLS-2重型背包", tier: 5, weight: 1 },
-  { name: "D3战术登山包", tier: 5, weight: 1 },
-  { name: "GT5野战背包", tier: 5, weight: 1 },
-  { name: "重型登山包", tier: 6, weight: 1 },
-  { name: "D7战术背包", tier: 6, weight: 1 },
-  { name: "GTO重型战术背包", tier: 6, weight: 1 },
+  { name: "运动背包", tier: 2, weight: 1 },
+  { name: "旅行背包", tier: 3, weight: 1 },
+  { name: "帆布背囊", tier: 4, weight: 1 },
+  { name: "DG运动背包", tier: 5, weight: 1 },
+  { name: "轻型户外背包", tier: 6, weight: 1 },
+  { name: "露营背包", tier: 7, weight: 1 },
+  { name: "战术快拆背包", tier: 8, weight: 1 },
+  { name: "突袭战术背包", tier: 9, weight: 1 },
+  { name: "大型登山包", tier: 10, weight: 1 },
+  { name: "3H战术背包", tier: 11, weight: 1 },
+  { name: "DASH战术背包", tier: 12, weight: 1 },
+  { name: "GA野战背包", tier: 13, weight: 1 },
+  { name: "雨林猎手背包", tier: 14, weight: 1 },
+  { name: "MAP侦查背包", tier: 15, weight: 1 },
+  { name: "野战徒步背包", tier: 16, weight: 1 },
+  { name: "D2战术登山包", tier: 17, weight: 1 },
+  { name: "GT1户外登山包", tier: 18, weight: 1 },
+  { name: "生存战术背包", tier: 19, weight: 1 },
+  { name: "ALS背负系统", tier: 20, weight: 1 },
+  { name: "HLS-2重型背包", tier: 21, weight: 1 },
+  { name: "D3战术登山包", tier: 22, weight: 1 },
+  { name: "GT5野战背包", tier: 23, weight: 1 },
+  { name: "重型登山包", tier: 24, weight: 1 },
+  { name: "D7战术背包", tier: 25, weight: 1 },
+  { name: "GTO重型战术背包", tier: 26, weight: 1 },
 ];
 
 // 干员 (烽火地带官网角色)
@@ -1637,29 +986,18 @@ function generateResults() {
     pBullet = randomItem(pAmmo.length > 0 ? pAmmo : pEntry.ammo);
   }
 
-  // 装备 — 低等级地图限制护甲≤4级
-  const maxEquipTier = LOW_TIER_MAPS.has(map) ? 4 : 99;
-  const pickEquip = (arr) => {
-    const pool = arr.filter(e => (e.tier || 1) <= maxEquipTier);
-    return pool.length > 0 ? randomItem(pool) : randomItem(arr);
-  };
-  const helmetObj = pickEquip(helmets);
-  const armorObj = pickEquip(armors);
-  const vestObj = pickEquip(vests);
-  const backpackObj = pickEquip(backpacks);
+  // 装备
+  const helmetObj = randomItem(helmets);
+  const armorObj = randomItem(armors);
+  const vestObj = randomItem(vests);
+  const backpackObj = randomItem(backpacks);
   const operator = randomItem(operators);
-
-  // 改枪配件
-  var w1Mod = (w1Display && !w1Display.startsWith('无')) ? generateGunMod(w1Display) : {};
-  var w2Mod = (w2Display && !w2Display.startsWith('无')) ? generateGunMod(w2Display) : {};
 
   return {
     w1: w1Display,
     a1: w1Bullet,
-    w1mod: w1Mod,
     w2: w2Display,
     a2: w2Bullet,
-    w2mod: w2Mod,
     pistol: pDisplay,
     pa: pBullet,
     helmet: helmetObj.name, aHelmet: helmetObj.tier || 1, armor: armorObj.name, aArmor: armorObj.tier || 1, vest: vestObj.name, aVest: vestObj.tier || 1, backpack: backpackObj.name, aBackpack: backpackObj.tier || 1,
@@ -1669,20 +1007,10 @@ function generateResults() {
 
 // ===== 动画 =====
 const cardIds = [
-  'card-w1','card-a1','card-w1mod','card-w2','card-a2','card-w2mod',
+  'card-w1','card-a1','card-w2','card-a2',
   'card-pistol','card-pa','card-helmet','card-armor',
   'card-vest','card-backpack','card-op','card-map'
 ];
-
-
-// 数字转中文等级（1→"一级", 6→"六级"）
-function tierToChinese(tier) {
-  var map = ["零","一","二","三","四","五","六","七","八","九","十"];
-  if (tier <= 10) return map[tier] || tier;
-  if (tier < 20) return "十" + (map[tier % 10] || "");
-  return tier;
-}
-
 
 async function drawAll() {
   const btn = document.getElementById('drawBtn');
@@ -1695,11 +1023,7 @@ async function drawAll() {
   // 滚动阶段展示的随机文本池（实时构建）
   const rollPool = [
     ...Object.keys(weaponCaliberMap), ...pistols.map(p=>p.name),
-    ...helmets.map(h=>tierToChinese(h.tier || 1)+' '+h.name),
-    ...armors.map(a=>tierToChinese(a.tier || 1)+' '+a.name),
-    ...vests.map(v=>tierToChinese(v.tier || 1)+' '+v.name),
-    ...backpacks.map(b=>tierToChinese(b.tier || 1)+' '+b.name),
-    ...operators, ...maps,
+    ...helmets, ...armors, ...vests, ...backpacks, ...operators, ...maps,
     "5.56×45mm", "7.62×39mm", "7.62×51mm", ".338 Lapua", "9×19mm",
     ".45 ACP", "5.8×42mm", "12号霰弹", "6.8×51mm", "9×39mm"
   ];
@@ -1717,33 +1041,14 @@ async function drawAll() {
 
   // 逐张揭晓
   const r = generateResults();
-  const keys = ['w1','a1','w1mod','w2','a2','w2mod','pistol','pa','helmet','armor','vest','backpack','operator','map'];
+  const keys = ['w1','a1','w2','a2','pistol','pa','helmet','armor','vest','backpack','operator','map'];
 
   for (let i = 0; i < cards.length; i++) {
     cards[i].classList.remove('rolling');
     const el = cards[i].querySelector('.card-value');
-    const key = keys[i];
-
-    // 改枪显示
-    if (key === 'w1mod' || key === 'w2mod') {
-      el.innerHTML = '<span style="color:#8b94a3;font-size:12px;line-height:1.8;">' + formatGunMod(r[key] || {}) + '</span>';
-    } else if (key === 'helmet' || key === 'armor' || key === 'vest' || key === 'backpack') {
-      const eqKey = key === 'helmet' ? 'aHelmet' : key === 'armor' ? 'aArmor' : key === 'vest' ? 'aVest' : 'aBackpack';
-      el.innerHTML = '<span class="card-tag">' + tierToChinese(r[eqKey] || 1) + '级</span>' + r[key];
-    } else if (key === 'a1' || key === 'a2' || key === 'pa') {
-      // 子弹显示等级
-      var t = extractTier(r[key]);
-      if (t <= 7) {
-        el.innerHTML = '<span class="card-tag">' + tierToChinese(t) + '级</span>' + r[key];
-      } else {
-        el.textContent = r[key];
-      }
-    } else {
-      el.textContent = r[key];
-    }
-
+    el.textContent = r[keys[i]];
     el.classList.remove('placeholder');
-    if ((key === 'w1' || key === 'w2' || key === 'pistol') && !r[key].startsWith('无')) {
+    if ((keys[i] === 'w1' || keys[i] === 'w2' || keys[i] === 'pistol') && !r[keys[i]].startsWith('无')) {
       el.classList.add('highlight');
     }
     cards[i].classList.add('revealed');
@@ -1819,30 +1124,26 @@ function serializePistols(arr) {
 }
 
 
-    function setProb(type, val, btn) {
-      if (type === 'w1') w1EmptyProb = val;
-      if (type === 'w2') w2EmptyProb = val;
-      if (type === 'p') pEmptyProb = val;
-      document.getElementById(type + 'ProbVal').textContent = Math.round(val * 100) + '%';
-      btn.parentElement.querySelectorAll('.prob-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
+	// 滑块更新函数
+    function updateProbSlider(type) {
+      const slider = document.getElementById(type + 'ProbSlider');
+      const display = document.getElementById(type + 'ProbVal');
+      display.textContent = slider.value + '%';
+      if (type === 'w1') w1EmptyProb = slider.value / 100;
+      if (type === 'w2') w2EmptyProb = slider.value / 100;
+      if (type === 'p') pEmptyProb = slider.value / 100;
     }
 
-    function setModProb(val, btn) {
-      gunModEmptyProb = val;
-      document.getElementById('modProbVal').textContent = Math.round(val * 100) + '%';
-      btn.parentElement.querySelectorAll('.prob-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-    }
-
-function openAdmin() {
-		  // 同步显示值
+		function openAdmin() {
+		  // 同步滑块到当前概率值
+		  document.getElementById('w1ProbSlider').value = Math.round(w1EmptyProb * 100);
+		  document.getElementById('w2ProbSlider').value = Math.round(w2EmptyProb * 100);
+		  document.getElementById('pProbSlider').value = Math.round(pEmptyProb * 100);
 		  document.getElementById('w1ProbVal').textContent = Math.round(w1EmptyProb * 100) + '%';
 		  document.getElementById('w2ProbVal').textContent = Math.round(w2EmptyProb * 100) + '%';
 		  document.getElementById('pProbVal').textContent = Math.round(pEmptyProb * 100) + '%';
-			  document.getElementById('modProbVal').textContent = Math.round(gunModEmptyProb * 100) + '%';
 
-if (!adminUnlocked) {
+		  if (!adminUnlocked) {
 	    const pw = prompt('请输入管理密码：');
 	    if (pw === '6121713') {
 	      adminUnlocked = true;
@@ -1913,9 +1214,6 @@ if (!adminUnlocked) {
 	  lines.push('];');
 	  lines.push('');
 
-	  lines.push('// ===== 改枪配件概率 =====');
-	  lines.push('gunModEmptyProb = ' + gunModEmptyProb + ';');
-	  lines.push('');
 	  lines.push('// ===== 概率设置 =====');
 	  lines.push('w1EmptyProb = ' + w1EmptyProb + ';');
 	  lines.push('w2EmptyProb = ' + w2EmptyProb + ';');
@@ -1945,7 +1243,6 @@ if (!adminUnlocked) {
 	      let maps = [];
 	      let w2EmptyProb = 0.35;
 	      let pEmptyProb = 0.30;
-	      let gunModEmptyProb = 0.30;
 
 	      ${src}
 
@@ -1960,8 +1257,7 @@ if (!adminUnlocked) {
 	        maps,
 	        w1EmptyProb,
 	        w2EmptyProb,
-	        pEmptyProb,
-	        gunModEmptyProb
+	        pEmptyProb
 	      };
 	    `);
 
@@ -1979,7 +1275,6 @@ if (!adminUnlocked) {
 	    if (typeof result.w1EmptyProb !== 'number' || result.w1EmptyProb < 0 || result.w1EmptyProb > 1) throw new Error('w1EmptyProb 必须为 0-1 之间的数字');
 		    if (typeof result.w2EmptyProb !== 'number' || result.w2EmptyProb < 0 || result.w2EmptyProb > 1) throw new Error('w2EmptyProb 必须为 0-1 之间的数字');
 	    if (typeof result.pEmptyProb !== 'number' || result.pEmptyProb < 0 || result.pEmptyProb > 1) throw new Error('pEmptyProb 必须为 0-1 之间的数字');
-	    if (typeof result.gunModEmptyProb !== 'number' || result.gunModEmptyProb < 0 || result.gunModEmptyProb > 1) throw new Error('gunModEmptyProb 必须为 0-1 之间的数字');
 
 	    // 应用更改 — weaponCaliberMap
 	    Object.keys(weaponCaliberMap).forEach(k => delete weaponCaliberMap[k]);
@@ -2011,7 +1306,6 @@ if (!adminUnlocked) {
 	    w1EmptyProb = result.w1EmptyProb;
 	    w2EmptyProb = result.w2EmptyProb;
 	    pEmptyProb = result.pEmptyProb;
-	    gunModEmptyProb = result.gunModEmptyProb || 0.30;
 
 	    closeAdmin();
 	    alert('✅ 数据已更新！');
