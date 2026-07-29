@@ -693,6 +693,47 @@
     font-size: 10px;
   }
 
+  /* Admin tabs */
+  .admin-tabs { display: flex; gap: 0; margin-bottom: 14px; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .admin-tab { flex: 1; padding: 8px 0; text-align: center; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; }
+  .admin-tab:hover { color: #94a3b8; }
+  .admin-tab.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+  .admin-tab-panel { display: none; }
+  .admin-tab-panel.active { display: block; }
+
+  /* Weapon browser */
+  .wb-search-wrap { position: relative; margin-bottom: 10px; }
+  .wb-search-wrap input { width: 100%; padding: 8px 12px 8px 32px; background: #0b0f17; border: 1px solid rgba(51,65,85,0.5); border-radius: 4px; color: #c8cdd4; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  .wb-search-wrap input:focus { border-color: rgba(245,158,11,0.6); }
+  .wb-search-wrap input::placeholder { color: #4b5563; }
+  .wb-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #4b5563; font-size: 14px; pointer-events: none; }
+
+  .wb-type-filters { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .wb-type-tag { padding: 4px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; border: 1px solid rgba(51,65,85,0.4); background: rgba(20,25,35,0.7); color: #64748b; transition: all 0.15s; white-space: nowrap; }
+  .wb-type-tag:hover { border-color: rgba(245,158,11,0.3); color: #94a3b8; }
+  .wb-type-tag.active { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.6); color: #f59e0b; }
+
+  .wb-weapon-list { max-height: 340px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .wb-weapon-row { border: 1px solid rgba(51,65,85,0.3); border-radius: 4px; margin-bottom: 4px; background: rgba(13,18,27,0.7); overflow: hidden; transition: border-color 0.2s; }
+  .wb-weapon-row:hover { border-color: rgba(245,158,11,0.2); }
+  .wb-weapon-row.open { border-color: rgba(245,158,11,0.4); background: rgba(15,21,31,0.9); }
+  .wb-weapon-header { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; user-select: none; }
+  .wb-weapon-header img { width: 44px; height: 24px; object-fit: contain; flex-shrink: 0; }
+  .wb-weapon-name { flex: 1; font-size: 13px; color: #c8cdd4; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-weapon-cal { font-size: 10px; color: #4b5563; margin-right: 4px; }
+  .wb-expand-icon { font-size: 10px; color: #4b5563; transition: transform 0.2s; }
+  .wb-weapon-row.open .wb-expand-icon { transform: rotate(180deg); color: #f59e0b; }
+
+  .wb-slots-wrap { display: none; padding: 0 10px 10px; }
+  .wb-weapon-row.open .wb-slots-wrap { display: block; }
+  .wb-slot-group { margin-top: 8px; }
+  .wb-slot-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 4px; }
+  .wb-slot-items { display: flex; flex-wrap: wrap; gap: 4px; }
+  .wb-acc-chip { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; background: rgba(20,25,35,0.8); border: 1px solid rgba(45,55,72,0.4); border-radius: 3px; font-size: 10px; color: #94a3b8; transition: all 0.15s; cursor: default; }
+  .wb-acc-chip:hover { border-color: rgba(245,158,11,0.3); color: #c8cdd4; }
+  .wb-acc-chip img { width: 24px; height: 16px; object-fit: contain; border-radius: 1px; }
+  .wb-no-result { text-align: center; padding: 24px; color: #4b5563; font-size: 13px; }
+
   /* Build detail: expanded card for weapon with attachments */
   .card-weapon-build {
     grid-column: 1 / -1;
@@ -845,47 +886,75 @@
 <!-- 管理按钮 -->
 <button class="admin-corner-btn" id="adminCornerBtn" title="管理" onclick="openAdmin()">⚙</button>
 
-<!-- 管理面板 -->
-<div class="admin-overlay" id="adminOverlay">
-  <div class="admin-dialog" style="max-width:620px;">
-    <h3>⚙ 设置</h3>
+	<!-- 管理面板 -->
+	<div class="admin-overlay" id="adminOverlay">
+	  <div class="admin-dialog" style="max-width:620px;">
+	    <h3>⚙ 设置</h3>
 
-    <!-- 概率滑块 -->
-    <div class="prob-settings">
-      <div class="prob-item">
-        <div class="prob-header">
-          <span class="prob-label">🔫 主武器为空概率</span>
-          <span class="prob-val" id="w1ProbVal">10%</span>
-        </div>
-        <input type="range" class="prob-slider" id="w1ProbSlider" min="0" max="100" value="10" oninput="updateProbSlider('w1')">
-      </div>
-      <div class="prob-item">
-        <div class="prob-header">
-          <span class="prob-label">🎯 副武器为空概率</span>
-          <span class="prob-val" id="w2ProbVal">35%</span>
-        </div>
-        <input type="range" class="prob-slider" id="w2ProbSlider" min="0" max="100" value="35" oninput="updateProbSlider('w2')">
-      </div>
-      <div class="prob-item">
-        <div class="prob-header">
-          <span class="prob-label">🔫 手枪为空概率</span>
-          <span class="prob-val" id="pProbVal">30%</span>
-        </div>
-        <input type="range" class="prob-slider" id="pProbSlider" min="0" max="100" value="30" oninput="updateProbSlider('p')">
-      </div>
-    </div>
+	    <!-- 标签页 -->
+	    <div class="admin-tabs">
+	      <button class="admin-tab active" onclick="switchAdminTab('settings')">抽奖设置</button>
+	      <button class="admin-tab" onclick="switchAdminTab('weapons')">🔍 武器配件</button>
+	    </div>
 
-    <p class="admin-subtitle" style="margin-top:20px;">下方为完整的抽奖数据定义（JavaScript），可直接编辑后即时生效</p>
-    <textarea id="admin-source" class="admin-source-area" spellcheck="false"></textarea>
-    <div class="admin-source-hint">
-      修改 <code>weaponCaliberMap</code> 武器/口径/子弹，<code>pistols</code> 手枪，<code>helmets/armors/vests/backpacks</code> 装备，<code>operators</code> 干员，<code>maps</code> 地图，<code>w1EmptyProb</code> 主武器空概率、<code>w2EmptyProb</code> 副武器空概率、<code>pEmptyProb</code> 手枪空概率
-    </div>
-    <div class="admin-actions">
-      <button class="admin-btn-close" onclick="closeAdmin()">取消</button>
-      <button class="admin-btn-save" onclick="saveData()">保存更改</button>
-    </div>
-  </div>
-</div>
+	    <!-- 面板1：抽奖设置 -->
+	    <div class="admin-tab-panel active" id="adminPanelSettings">
+	      <div class="prob-settings">
+	        <div class="prob-item">
+	          <div class="prob-header">
+	            <span class="prob-label">🔫 主武器为空概率</span>
+	            <span class="prob-val" id="w1ProbVal">10%</span>
+	          </div>
+	          <input type="range" class="prob-slider" id="w1ProbSlider" min="0" max="100" value="10" oninput="updateProbSlider('w1')">
+	        </div>
+	        <div class="prob-item">
+	          <div class="prob-header">
+	            <span class="prob-label">🎯 副武器为空概率</span>
+	            <span class="prob-val" id="w2ProbVal">35%</span>
+	          </div>
+	          <input type="range" class="prob-slider" id="w2ProbSlider" min="0" max="100" value="35" oninput="updateProbSlider('w2')">
+	        </div>
+	        <div class="prob-item">
+	          <div class="prob-header">
+	            <span class="prob-label">🔫 手枪为空概率</span>
+	            <span class="prob-val" id="pProbVal">30%</span>
+	          </div>
+	          <input type="range" class="prob-slider" id="pProbSlider" min="0" max="100" value="30" oninput="updateProbSlider('p')">
+	        </div>
+	      </div>
+
+	      <p class="admin-subtitle" style="margin-top:20px;">下方为完整的抽奖数据定义（JavaScript），可直接编辑后即时生效</p>
+	      <textarea id="admin-source" class="admin-source-area" spellcheck="false"></textarea>
+	      <div class="admin-source-hint">
+	        修改 <code>weaponCaliberMap</code> 武器/口径/子弹，<code>pistols</code> 手枪，<code>helmets/armors/vests/backpacks</code> 装备，<code>operators</code> 干员，<code>maps</code> 地图，<code>w1EmptyProb</code> 主武器空概率、<code>w2EmptyProb</code> 副武器空概率、<code>pEmptyProb</code> 手枪空概率
+	      </div>
+	    </div>
+
+	    <!-- 面板2：武器配件浏览器 -->
+	    <div class="admin-tab-panel" id="adminPanelWeapons">
+	      <div class="wb-search-wrap">
+	        <span class="wb-search-icon">🔍</span>
+	        <input type="text" id="wbSearch" placeholder="搜索武器名称…" oninput="filterWeaponBrowser()">
+	      </div>
+	      <div class="wb-type-filters" id="wbTypeFilters">
+	        <span class="wb-type-tag active" data-type="all" onclick="filterWeaponBrowserType('all',this)">全部</span>
+	        <span class="wb-type-tag" data-type="手枪" onclick="filterWeaponBrowserType('手枪',this)">手枪</span>
+	        <span class="wb-type-tag" data-type="冲锋枪" onclick="filterWeaponBrowserType('冲锋枪',this)">冲锋枪</span>
+	        <span class="wb-type-tag" data-type="突击步枪" onclick="filterWeaponBrowserType('突击步枪',this)">突击步枪</span>
+	        <span class="wb-type-tag" data-type="战斗步枪" onclick="filterWeaponBrowserType('战斗步枪',this)">战斗步枪</span>
+	        <span class="wb-type-tag" data-type="射手步枪" onclick="filterWeaponBrowserType('射手步枪',this)">射手步枪</span>
+	        <span class="wb-type-tag" data-type="狙击步枪" onclick="filterWeaponBrowserType('狙击步枪',this)">狙击步枪</span>
+	        <span class="wb-type-tag" data-type="霰弹枪" onclick="filterWeaponBrowserType('霰弹枪',this)">霰弹枪</span>
+	        <span class="wb-type-tag" data-type="机枪" onclick="filterWeaponBrowserType('机枪',this)">机枪</span>
+	      </div>
+	      <div class="wb-weapon-list" id="wbWeaponList"></div>
+	    </div>
+
+	    <div class="admin-actions">
+	      <button class="admin-btn-close" onclick="closeAdmin()">关闭</button>
+	    </div>
+	  </div>
+	</div>
 
 <script>
 
@@ -2600,6 +2669,136 @@ function openAdmin() {
   }
   document.getElementById('admin-source').value = buildDataSourceCode();
   document.getElementById('adminOverlay').classList.add('open');
+
+  // Pre-build weapon browser on first open
+  if (document.getElementById('wbWeaponList').children.length === 0) {
+    buildWeaponBrowser();
+  }
+}
+
+// ===== 武器配件浏览器 =====
+let wbCurrentType = 'all';
+let wbWeapons = [];  // [{name, type, cal, slots: [{slot, accessories: [{name,url}]}] }]
+
+function getWeaponType(name) {
+  if (name.includes('手枪') && !name.includes('冲锋')) return '手枪';
+  if (name.includes('冲锋枪')) return '冲锋枪';
+  if (name.includes('战斗步枪')) return '战斗步枪';
+  if (name.includes('突击步枪')) return '突击步枪';
+  if (name.includes('射手步枪') || name.includes('杠杆步枪')) return '射手步枪';
+  if (name.includes('狙击步枪')) return '狙击步枪';
+  if (name.includes('霰弹枪')) return '霰弹枪';
+  if (name.includes('轻机枪') || name.includes('通用机枪')) return '机枪';
+  return '其他';
+}
+
+function buildWeaponBrowser() {
+  wbWeapons = [];
+  const allNames = Object.keys(WEAPON_SLOT_MAP);
+  allNames.sort((a, b) => a.localeCompare(b, 'zh'));
+
+  for (const wname of allNames) {
+    const slots = WEAPON_SLOT_MAP[wname];
+    const calEntry = weaponCaliberMap[wname];
+    const cal = calEntry ? calEntry.cal : '';
+    const type = getWeaponType(wname);
+
+    const slotData = [];
+    for (const slot of slots) {
+      const pool = ACCESSORY_POOL[slot];
+      if (!pool) continue;
+      const compat = pool.filter(p => isAccessoryCompatible(wname, p.name));
+      if (compat.length > 0) {
+        slotData.push({ slot, accessories: compat });
+      }
+    }
+
+    wbWeapons.push({ name: wname, type, cal, slots: slotData });
+  }
+
+  renderWeaponBrowser();
+}
+
+function renderWeaponBrowser() {
+  const container = document.getElementById('wbWeaponList');
+  const searchText = (document.getElementById('wbSearch').value || '').toLowerCase();
+
+  let filtered = wbWeapons;
+  if (wbCurrentType !== 'all') {
+    filtered = filtered.filter(w => w.type === wbCurrentType);
+  }
+  if (searchText) {
+    filtered = filtered.filter(w => w.name.toLowerCase().includes(searchText));
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="wb-no-result">未找到匹配的武器</div>';
+    return;
+  }
+
+  let html = '';
+  for (const w of filtered) {
+    html += '<div class="wb-weapon-row" id="wbRow_' + w.name.replace(/[^a-zA-Z0-9一-鿿]/g, '_') + '">';
+    html += '<div class="wb-weapon-header" onclick="toggleWeaponRow(\'' + w.name.replace(/'/g, "\\'") + '\')">';
+    const imgUrl = getWeaponImageUrl(w.name);
+    if (imgUrl) html += '<img src="' + imgUrl + '" onerror="this.style.display=\'none\'" loading="lazy">';
+    html += '<span class="wb-weapon-name">' + w.name + '</span>';
+    html += '<span class="wb-weapon-cal">' + w.cal + '</span>';
+    html += '<span class="wb-expand-icon">▼</span>';
+    html += '</div>';
+    html += '<div class="wb-slots-wrap">';
+    for (const sg of w.slots) {
+      html += '<div class="wb-slot-group"><div class="wb-slot-label">' + sg.slot + '（' + sg.accessories.length + '）</div><div class="wb-slot-items">';
+      for (const acc of sg.accessories) {
+        html += '<span class="wb-acc-chip">';
+        html += '<img src="' + acc.url + '" onerror="this.style.display=\'none\'" loading="lazy">';
+        html += acc.name;
+        html += '</span>';
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function toggleWeaponRow(wname) {
+  const id = 'wbRow_' + wname.replace(/[^a-zA-Z0-9一-鿿]/g, '_');
+  const row = document.getElementById(id);
+  if (row) row.classList.toggle('open');
+}
+
+function filterWeaponBrowser() {
+  renderWeaponBrowser();
+}
+
+function filterWeaponBrowserType(type, el) {
+  wbCurrentType = type;
+  document.querySelectorAll('#wbTypeFilters .wb-type-tag').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('wbSearch').value = '';
+  renderWeaponBrowser();
+}
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+  if (tab === 'settings') {
+    document.querySelector('.admin-tab:nth-child(1)').classList.add('active');
+    document.getElementById('adminPanelSettings').classList.add('active');
+  } else {
+    document.querySelector('.admin-tab:nth-child(2)').classList.add('active');
+    document.getElementById('adminPanelWeapons').classList.add('active');
+    // Build weapon browser on first view
+    if (document.getElementById('wbWeaponList').children.length === 0) {
+      buildWeaponBrowser();
+    }
+  }
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
 }
 
 function buildDataSourceCode() {
@@ -2653,10 +2852,6 @@ function buildDataSourceCode() {
   lines.push('w2EmptyProb = ' + w2EmptyProb + ';');
   lines.push('pEmptyProb = ' + pEmptyProb + ';');
   return lines.join('\n');
-}
-
-function closeAdmin() {
-  document.getElementById('adminOverlay').classList.remove('open');
 }
 
 function saveData() {
